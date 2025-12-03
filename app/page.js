@@ -3,20 +3,23 @@
 import { useState, useEffect } from 'react'
 import LandingPage from '@/components/LandingPage'
 import Introduction from '@/components/Introduction'
-import CurriculumFlow from '@/components/CurriculumFlow'
+import ProfileSetup from '@/components/ProfileSetup'
+import PreAssessment from '@/components/PreAssessment'
+import ChapterNavigator from '@/components/ChapterNavigator'
+import ChapterFlow from '@/components/ChapterFlow'
 import Assessment from '@/components/Assessment'
 import Dashboard from '@/components/Dashboard'
 import GamesMenu from '@/components/GamesMenu'
 import WasteMeter from '@/components/WasteMeter'
 import EnhancedFocusMeter from '@/components/EnhancedFocusMeter'
-import { useAppStore } from '@/store/appStore'
+import { useEnhancedStore } from '@/store/enhancedAppStore'
 
 // 🎯 Toggle between meters: 'original' or 'enhanced'
 // Change this to easily test both versions!
 const USE_METER = 'enhanced' // Try: 'original' or 'enhanced'
 
 export default function Home() {
-  const { currentPhase, sessionId, initializeSession } = useAppStore()
+  const { currentPhase, sessionId, initializeSession, setPhase, currentChapter, setCurrentChapter } = useEnhancedStore()
 
   useEffect(() => {
     // Initialize session on mount
@@ -31,10 +34,22 @@ export default function Home() {
         return <LandingPage />
       case 'introduction':
         return <Introduction />
-      case 'activities':
-        return <CurriculumFlow />
+      case 'profile':
+        return <ProfileSetup onComplete={() => setPhase('pre-assessment')} />
+      case 'pre-assessment':
+        return <PreAssessment onComplete={() => setPhase('chapters')} />
+      case 'chapters':
+        return <ChapterNavigator onSelectChapter={(chapterId) => {
+          setCurrentChapter(chapterId)
+          setPhase('chapter-flow')
+        }} />
+      case 'chapter-flow':
+        return <ChapterFlow
+          chapterId={currentChapter}
+          onComplete={() => setPhase('chapters')}
+        />
       case 'games':
-        return <GamesMenu onBack={() => useAppStore.getState().setPhase('activities')} />
+        return <GamesMenu onBack={() => setPhase('chapters')} />
       case 'assessment':
         return <Assessment />
       case 'dashboard':

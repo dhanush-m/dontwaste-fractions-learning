@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { useAppStore } from '@/store/appStore'
+import { useEnhancedStore } from '@/store/enhancedAppStore'
 import ChocolateBarActivity from './ChocolateBarActivity'
 import VoiceInput from './VoiceInput'
 import Timer from './Timer'
 
 export default function Introduction() {
-  const { setPhase, updateTimeSpent } = useAppStore()
+  const { setPhase } = useEnhancedStore()
   const [isComplete, setIsComplete] = useState(false)
   const timerRef = useRef(null)
   const [timeElapsed, setTimeElapsed] = useState(0)
@@ -48,7 +48,7 @@ export default function Introduction() {
   }
 
   const handleContinue = () => {
-    setPhase('activities')
+    setPhase('profile')
   }
 
   const speakPrompt = () => {

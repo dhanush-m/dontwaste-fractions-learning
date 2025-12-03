@@ -1,10 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useAppStore } from '@/store/appStore'
+import { useEnhancedStore } from '@/store/enhancedAppStore'
 
 export default function LandingPage() {
-  const { setPhase } = useAppStore()
+  const { setPhase } = useEnhancedStore()
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
