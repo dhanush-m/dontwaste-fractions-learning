@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useEnhancedStore } from '@/store/enhancedAppStore'
 import { getChapterById } from '@/data/curriculum'
 import LessonViewer from './lessons/LessonViewer'
+import MasteryQuiz from './MasteryQuiz'
 import { fractionsLesson } from '@/data/lessons/fractionsLesson'
 
 // Import existing activities
@@ -126,7 +127,7 @@ export default function ChapterFlow({ chapterId, onComplete }) {
             Ready for the Mastery Quiz?
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            You've completed all activities in this chapter! Take the mastery quiz to unlock the next chapter.
+            You&apos;ve completed all activities in this chapter! Take the mastery quiz to unlock the next chapter.
           </p>
 
           <div className="bg-blue-50 rounded-xl p-6 mb-8">
@@ -166,25 +167,9 @@ export default function ChapterFlow({ chapterId, onComplete }) {
     )
   }
 
-  // Render Mastery Quiz (placeholder for now)
+  // Render Mastery Quiz
   if (currentStep === 'mastery') {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">Mastery Quiz Coming Soon!</h2>
-          <p className="text-gray-600 mb-8">This feature is being built.</p>
-          <button
-            onClick={() => {
-              // Simulate passing for now
-              handleMasteryComplete(85)
-            }}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-xl"
-          >
-            Simulate Pass (85%) →
-          </button>
-        </div>
-      </div>
-    )
+    return <MasteryQuiz chapterId={chapterId} onComplete={handleMasteryComplete} />
   }
 
   // Render Chapter Menu (Activities Overview)

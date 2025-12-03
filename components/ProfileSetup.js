@@ -74,7 +74,7 @@ export default function ProfileSetup({ onComplete }) {
               Welcome to Your Learning Journey!
             </h1>
             <p className="text-gray-600 mb-8">
-              Let's start by getting to know you. What should we call you?
+              Let&apos;s start by getting to know you. What should we call you?
             </p>
 
             <input

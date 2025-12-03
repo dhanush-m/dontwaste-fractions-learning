@@ -39,7 +39,7 @@ export default function LandingPage() {
         >
           <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-              What You'll Learn
+              What You&apos;ll Learn
             </h2>
             <ul className="text-left space-y-2 text-gray-600">
               <li className="flex items-start">

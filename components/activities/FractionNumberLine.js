@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAppStore } from '@/store/appStore'
+import { useEnhancedStore } from '@/store/enhancedAppStore'
 import confetti from 'canvas-confetti'
 
-export default function FractionNumberLine({ onComplete }) {
-  const { addPoints, addBadge } = useAppStore()
+export default function FractionNumberLine({ onComplete, chapterId = 'fractions' }) {
+  const { addXP, addBadge, recordAnswer, useHint: trackHintUsage } = useEnhancedStore()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
   const [questions, setQuestions] = useState([])
@@ -67,7 +67,10 @@ export default function FractionNumberLine({ onComplete }) {
 
     if (isCorrect) {
       setScore(prev => prev + 1)
-      addPoints(12)
+
+      // Record correct answer and award XP
+      recordAnswer(true, chapterId, `Placed ${question.fraction.num}/${question.fraction.den} at ${position.toFixed(2)}`)
+      addXP(12, 'Number Line Placement')
 
       setFeedback({
         correct: true,
@@ -88,6 +91,9 @@ export default function FractionNumberLine({ onComplete }) {
         })
       }
     } else {
+      // Record wrong answer
+      recordAnswer(false, chapterId, `Placed ${question.fraction.num}/${question.fraction.den} at ${position.toFixed(2)} (should be ${question.value.toFixed(2)})`)
+
       setFeedback({
         correct: false,
         message: `Not quite. ${question.fraction.num}/${question.fraction.den} should be at ${question.value.toFixed(2)}, not ${position.toFixed(2)}`
@@ -203,7 +209,12 @@ export default function FractionNumberLine({ onComplete }) {
         {/* Hint Button */}
         <div className="text-center mb-4">
           <button
-            onClick={() => setShowHint(!showHint)}
+            onClick={() => {
+              if (!showHint) {
+                trackHintUsage('number-line', 1)
+              }
+              setShowHint(!showHint)
+            }}
             className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg"
           >
             {showHint ? 'Hide Hint' : 'Need Help?'}

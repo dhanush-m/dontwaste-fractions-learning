@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAppStore } from '@/store/appStore'
+import { useEnhancedStore } from '@/store/enhancedAppStore'
 import confetti from 'canvas-confetti'
 
 const WORD_PROBLEMS = [
@@ -80,8 +80,8 @@ const WORD_PROBLEMS = [
   }
 ]
 
-export default function WordProblems({ onComplete }) {
-  const { addPoints, addBadge } = useAppStore()
+export default function WordProblems({ onComplete, chapterId = 'fractions' }) {
+  const { addXP, addBadge, recordAnswer, useHint: trackHintUsage } = useEnhancedStore()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
   const [userAnswer, setUserAnswer] = useState({ numerator: '', denominator: '' })
@@ -116,7 +116,10 @@ export default function WordProblems({ onComplete }) {
 
     if (isCorrect) {
       setScore(prev => prev + 1)
-      addPoints(20)
+
+      // Record correct answer and award XP
+      recordAnswer(true, chapterId, `Word Problem ${problem.id}: ${problem.simplified.num}/${problem.simplified.den}`)
+      addXP(20, 'Word Problem Solved')
 
       setFeedback({
         correct: true,
@@ -156,6 +159,9 @@ export default function WordProblems({ onComplete }) {
         }
       }, 2500)
     } else {
+      // Record wrong answer
+      recordAnswer(false, chapterId, `Word Problem ${problem.id}: incorrect answer`)
+
       setFeedback({
         correct: false,
         message: `Not quite. The correct answer is ${problem.simplified.num}/${problem.simplified.den}. Think about the story again!`
@@ -365,7 +371,12 @@ export default function WordProblems({ onComplete }) {
         {/* Controls */}
         <div className="flex justify-center gap-4 mb-4">
           <button
-            onClick={() => setShowHint(!showHint)}
+            onClick={() => {
+              if (!showHint) {
+                trackHintUsage('word-problems', 1)
+              }
+              setShowHint(!showHint)
+            }}
             className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg"
           >
             {showHint ? 'Hide Hint' : 'Show Hint'}

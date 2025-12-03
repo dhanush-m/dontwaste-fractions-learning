@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAppStore } from '@/store/appStore'
+import { useEnhancedStore } from '@/store/enhancedAppStore'
 import confetti from 'canvas-confetti'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 // Generate equivalent fraction sets
 const generateEquivalentSets = () => {
@@ -24,8 +22,8 @@ const generateEquivalentSets = () => {
   return sets
 }
 
-export default function EquivalentFractionsMatcher({ onComplete }) {
-  const { sessionId, addPoints, addBadge } = useAppStore()
+export default function EquivalentFractionsMatcher({ onComplete, chapterId = 'fractions' }) {
+  const { addXP, addBadge, recordAnswer, useHint: trackHintUsage } = useEnhancedStore()
   const [currentSet, setCurrentSet] = useState(0)
   const [sets] = useState(generateEquivalentSets())
   const [selectedCards, setSelectedCards] = useState([])
@@ -85,7 +83,10 @@ export default function EquivalentFractionsMatcher({ onComplete }) {
         c.id === card1.id || c.id === card2.id ? { ...c, matched: true } : c
       ))
 
-      addPoints(20)
+      // Record correct answer and award XP
+      recordAnswer(true, chapterId, `${card1.num}/${card1.den} = ${card2.num}/${card2.den}`)
+      addXP(10, 'Equivalent Match')
+
       confetti({
         particleCount: 50,
         spread: 60,
@@ -104,6 +105,9 @@ export default function EquivalentFractionsMatcher({ onComplete }) {
     } else {
       // No match
       setFeedback('Not quite! These fractions aren&apos;t equivalent. Try again!')
+
+      // Record wrong answer
+      recordAnswer(false, chapterId, `${card1.num}/${card1.den} ≠ ${card2.num}/${card2.den}`)
 
       setTimeout(() => {
         setSelectedCards([])
@@ -176,7 +180,12 @@ export default function EquivalentFractionsMatcher({ onComplete }) {
         {/* Hint Button */}
         <div className="text-center mb-4">
           <button
-            onClick={() => setShowHint(!showHint)}
+            onClick={() => {
+              if (!showHint) {
+                trackHintUsage('equivalent-matcher', 1)
+              }
+              setShowHint(!showHint)
+            }}
             className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg"
           >
             {showHint ? 'Hide Hint' : 'Need Help?'}
