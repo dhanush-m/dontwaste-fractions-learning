@@ -222,16 +222,16 @@ export default function Assessment() {
               className="mb-6"
             >
               <p className="text-2xl text-green-600 font-semibold mb-4">
-                🎉 Excellent Work! You've mastered fractions!
+                🎉 Excellent Work! You&apos;ve mastered fractions!
               </p>
               <p className="text-gray-600">
-                You're ready to apply fractions in everyday life!
+                You&apos;re ready to apply fractions in everyday life!
               </p>
             </motion.div>
           ) : (
             <motion.div className="mb-6">
               <p className="text-xl text-orange-600 font-semibold mb-4">
-                Good effort! Let's practice more.
+                Good effort! Let&apos;s practice more.
               </p>
               <p className="text-gray-600">
                 You can review the activities and try again. Remember, practice makes perfect!

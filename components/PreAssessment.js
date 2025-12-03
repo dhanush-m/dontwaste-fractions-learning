@@ -255,8 +255,8 @@ export default function PreAssessment({ onComplete }) {
               </h3>
               <p className="text-gray-700 text-sm">
                 Our system will automatically adjust the difficulty and examples based on your performance.
-                If you struggle with a concept, we'll provide simpler explanations and more practice.
-                When you master a topic, we'll challenge you with harder problems!
+                If you struggle with a concept, we&apos;ll provide simpler explanations and more practice.
+                When you master a topic, we&apos;ll challenge you with harder problems!
               </p>
             </div>
 

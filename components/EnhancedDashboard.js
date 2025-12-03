@@ -264,7 +264,7 @@ export default function EnhancedDashboard() {
                 <div className="md:col-span-2 lg:col-span-4 bg-white rounded-xl p-6 shadow-lg">
                   <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                     <span>🎯</span>
-                    <span>Today's Goals</span>
+                    <span>Today&apos;s Goals</span>
                   </h3>
                   <div className="space-y-3">
                     <div>

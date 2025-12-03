@@ -339,7 +339,7 @@ export default function AdaptiveActivities() {
                   {currentQuestion.type === 'visual' && (
                     <div className="mb-4">
                       <p className="text-sm text-gray-600 mb-2">
-                        Use the input below to answer (e.g., "3/4" or "three fourths")
+                        Use the input below to answer (e.g., &quot;3/4&quot; or &quot;three fourths&quot;)
                       </p>
                     </div>
                   )}
@@ -465,7 +465,7 @@ export default function AdaptiveActivities() {
               🎮 Unlock Mini-Games!
             </h3>
             <p className="text-gray-600 mb-4">
-              You've answered {questionsAnswered} questions! Try fun games to practice fractions.
+              You&apos;ve answered {questionsAnswered} questions! Try fun games to practice fractions.
             </p>
             <button
               onClick={() => setPhase('games')}

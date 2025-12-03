@@ -112,10 +112,10 @@ export default function Introduction() {
             </div>
 
             <p className="text-lg md:text-xl text-gray-700 mb-4 leading-relaxed">
-              <strong className="text-blue-600">Now let's practice!</strong> Imagine dividing a chocolate bar among friends—how do you ensure fairness?
+              <strong className="text-blue-600">Now let&apos;s practice!</strong> Imagine dividing a chocolate bar among friends—how do you ensure fairness?
             </p>
             <p className="text-base md:text-lg text-gray-600 mb-6">
-              Let's start by exploring fractions visually with an interactive activity!
+              Let&apos;s start by exploring fractions visually with an interactive activity!
             </p>
           </motion.div>
 
