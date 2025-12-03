@@ -4,7 +4,16 @@ import { motion } from 'framer-motion'
 import { useEnhancedStore } from '@/store/enhancedAppStore'
 
 export default function LandingPage() {
-  const { setPhase } = useEnhancedStore()
+  const { setPhase, setStudent, initializeSession, updateStreak } = useEnhancedStore()
+
+  const handleStartLearning = () => {
+    // Initialize session
+    initializeSession()
+    updateStreak()
+
+    // Go to name input first
+    setPhase('name-input')
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -21,7 +30,7 @@ export default function LandingPage() {
         >
           <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-4">
             Master Math with
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block mt-2">TimeBack Learning</span>
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block mt-2">DontWaste Education</span>
           </h1>
           <p className="text-xl text-gray-600 mb-4">
             An adaptive, gamified learning platform for Grades 1-8
@@ -97,14 +106,14 @@ export default function LandingPage() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setPhase('introduction')}
+            onClick={handleStartLearning}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg transition-colors"
           >
             Start Learning Journey
           </motion.button>
 
           <p className="text-sm text-gray-500 mt-4">
-            Start with a quick assessment • Learn at your own pace • Track your progress
+            Jump right in • Learn at your own pace • Track your progress
           </p>
         </motion.div>
       </motion.div>

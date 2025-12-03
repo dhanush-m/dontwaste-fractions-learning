@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import LandingPage from '@/components/LandingPage'
+import NameInput from '@/components/NameInput'
 import Introduction from '@/components/Introduction'
 import ProfileSetup from '@/components/ProfileSetup'
 import PreAssessment from '@/components/PreAssessment'
+import WelcomeMessage from '@/components/WelcomeMessage'
 import ChapterNavigator from '@/components/ChapterNavigator'
 import ChapterFlow from '@/components/ChapterFlow'
 import Assessment from '@/components/Assessment'
@@ -32,12 +34,16 @@ export default function Home() {
     switch (currentPhase) {
       case 'landing':
         return <LandingPage />
+      case 'name-input':
+        return <NameInput onComplete={() => setPhase('pre-assessment')} />
       case 'introduction':
         return <Introduction />
       case 'profile':
         return <ProfileSetup onComplete={() => setPhase('pre-assessment')} />
       case 'pre-assessment':
-        return <PreAssessment onComplete={() => setPhase('chapters')} />
+        return <PreAssessment onComplete={() => setPhase('welcome')} />
+      case 'welcome':
+        return <WelcomeMessage onComplete={() => setPhase('chapters')} />
       case 'chapters':
         return <ChapterNavigator onSelectChapter={(chapterId) => {
           setCurrentChapter(chapterId)
@@ -62,8 +68,8 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {renderPhase()}
-      {/* Show focus meter on all pages except landing and dashboard */}
-      {currentPhase !== 'landing' && currentPhase !== 'dashboard' && (
+      {/* Show focus meter on all pages except landing, name-input, welcome, and dashboard */}
+      {!['landing', 'name-input', 'welcome', 'dashboard'].includes(currentPhase) && (
         USE_METER === 'enhanced' ? <EnhancedFocusMeter /> : <WasteMeter />
       )}
     </main>

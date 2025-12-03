@@ -154,11 +154,9 @@ Keep responses concise (2-3 sentences) unless explanation needed.`
     setMessages(prev => [...prev, assistantMessage])
   }
 
+  // Removed Enter key functionality - keeping dummy for now
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
-    }
+    // Disabled
   }
 
   const clearChat = () => {
@@ -304,8 +302,9 @@ Keep responses concise (2-3 sentences) unless explanation needed.`
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleSend}
-                  disabled={!input.trim()}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-300 disabled:to-gray-300 text-white p-3 rounded-xl transition-colors"
+                  disabled={true}
+                  className="bg-gradient-to-r from-gray-300 to-gray-300 text-white p-3 rounded-xl transition-colors cursor-not-allowed opacity-50"
+                  title="Chatbot send is currently disabled"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/appStore'
+import { useEnhancedStore } from '@/store/enhancedAppStore'
 import confetti from 'canvas-confetti'
 import TextToSpeech from '@/components/TextToSpeech'
 import AIGuru from '@/components/AIGuru'
 
 export default function LessonViewer({ lesson, onComplete }) {
   const { addPoints } = useAppStore()
+  const { learningLevel } = useEnhancedStore()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [completedSlides, setCompletedSlides] = useState(new Set())
   const [showQuiz, setShowQuiz] = useState(false)
@@ -62,30 +64,52 @@ export default function LessonViewer({ lesson, onComplete }) {
     let text = slide.title ? slide.title + '. ' : ''
 
     if (slide.content) {
-      text += slide.content
+      text += slide.content + ' '
+    }
+
+    if (slide.hyderabadExample) {
+      text += slide.hyderabadExample.scenario + ' '
+      if (slide.hyderabadExample.question) {
+        text += slide.hyderabadExample.question + ' '
+      }
+      if (slide.hyderabadExample.answer) {
+        text += 'Answer: ' + slide.hyderabadExample.answer + ' '
+      }
+    }
+
+    if (slide.realWorldConnection) {
+      text += slide.realWorldConnection.scenario + ' '
     }
 
     if (slide.problem) {
-      text += ' Problem: ' + slide.problem
+      text += ' Problem: ' + slide.problem + ' '
     }
 
     if (slide.steps && slide.steps.length > 0) {
-      text += ' Steps: ' + slide.steps.join('. ')
+      text += ' Steps: ' + slide.steps.join('. ') + ' '
     }
 
     if (slide.solution) {
-      text += ' Solution: ' + slide.solution
+      text += ' Solution: ' + slide.solution + ' '
     }
 
     if (slide.scenario) {
-      text += ' Scenario: ' + slide.scenario
+      if (typeof slide.scenario === 'string') {
+        text += ' Scenario: ' + slide.scenario + ' '
+      } else if (slide.scenario.context) {
+        text += ' Scenario: ' + slide.scenario.context + ' '
+      }
     }
 
     if (slide.explanation) {
-      text += ' ' + slide.explanation
+      text += ' ' + slide.explanation + ' '
     }
 
-    return text
+    if (slide.instruction) {
+      text += slide.instruction + ' '
+    }
+
+    return text.trim()
   }
 
   if (showQuiz) {
@@ -188,6 +212,40 @@ export default function LessonViewer({ lesson, onComplete }) {
           </div>
         </div>
 
+        {/* Adaptive Learning Level Indicator */}
+        {currentSlide === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`rounded-xl p-4 mb-6 ${
+              learningLevel === 'beginner' ? 'bg-gradient-to-r from-purple-100 to-pink-100' :
+              learningLevel === 'intermediate' ? 'bg-gradient-to-r from-blue-100 to-cyan-100' :
+              'bg-gradient-to-r from-green-100 to-emerald-100'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="text-3xl">
+                {learningLevel === 'beginner' ? '🌟' : learningLevel === 'intermediate' ? '🎯' : '✨'}
+              </div>
+              <div>
+                <p className="font-bold text-gray-800">
+                  {learningLevel === 'beginner' ? 'Beginner Level' :
+                   learningLevel === 'intermediate' ? 'Intermediate Level' :
+                   'Advanced Level'}
+                </p>
+                <p className="text-sm text-gray-700">
+                  {learningLevel === 'beginner'
+                    ? 'Super simple examples with Hyderabad favorites! 🍛'
+                    : learningLevel === 'intermediate'
+                    ? 'Practical Hyderabad examples with clear guidance 📚'
+                    : 'Complex real-world Hyderabad scenarios 🎓'
+                  }
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Slide Content */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -202,13 +260,84 @@ export default function LessonViewer({ lesson, onComplete }) {
             {slide.type === 'concept' && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <div className="text-6xl mb-4">{slide.icon}</div>
+                  {slide.icon && <div className="text-6xl mb-4">{slide.icon}</div>}
                   <h2 className="text-3xl font-bold text-gray-800 mb-4">{slide.title}</h2>
                 </div>
 
-                <div className="prose prose-lg max-w-none">
-                  <p className="text-xl text-gray-700 leading-relaxed">{slide.content}</p>
-                </div>
+                {slide.content && (
+                  <div className="prose prose-lg max-w-none">
+                    <p className="text-xl text-gray-700 leading-relaxed">{slide.content}</p>
+                  </div>
+                )}
+
+                {/* Hyderabad Example Section */}
+                {slide.hyderabadExample && (
+                  <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-6 border-2 border-orange-200">
+                    <h3 className="text-xl font-bold text-orange-900 mb-3 flex items-center gap-2">
+                      🍛 {slide.hyderabadExample.title}
+                    </h3>
+                    <div className="space-y-4">
+                      <p className="text-gray-800">{slide.hyderabadExample.scenario}</p>
+
+                      {slide.hyderabadExample.question && (
+                        <div className="bg-white rounded-lg p-4 border-l-4 border-orange-500">
+                          <p className="font-semibold text-gray-800 mb-2">Question:</p>
+                          <p className="text-gray-700">{slide.hyderabadExample.question}</p>
+                        </div>
+                      )}
+
+                      {slide.hyderabadExample.answer && (
+                        <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                          <p className="font-semibold text-green-800 mb-2">Answer:</p>
+                          <p className="text-green-700">{slide.hyderabadExample.answer}</p>
+                        </div>
+                      )}
+
+                      {slide.hyderabadExample.silly && (
+                        <div className="bg-purple-50 rounded-lg p-3 italic">
+                          <p className="text-purple-800 text-sm">💡 {slide.hyderabadExample.silly}</p>
+                        </div>
+                      )}
+
+                      {slide.hyderabadExample.examples && slide.hyderabadExample.examples.map((ex, idx) => (
+                        <div key={idx} className="bg-white rounded-lg p-4 space-y-2">
+                          <p className="text-gray-800 font-semibold">{ex.situation}</p>
+                          <p className="text-2xl font-bold text-blue-600">{ex.fraction}</p>
+                          <p className="text-gray-700 text-sm">{ex.explanation}</p>
+                          {ex.visual && <p className="text-lg mt-2">{ex.visual}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Real World Connection */}
+                {slide.realWorldConnection && (
+                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6">
+                    <h3 className="text-lg font-bold text-blue-900 mb-3">🌍 Real-World Application</h3>
+                    <p className="text-gray-800 mb-3">{slide.realWorldConnection.scenario}</p>
+                    {slide.realWorldConnection.calculation && (
+                      <div className="bg-white rounded-lg p-3 font-mono text-blue-700">
+                        {slide.realWorldConnection.calculation}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Method Section (for intermediate level) */}
+                {slide.method && (
+                  <div className="bg-blue-50 rounded-xl p-6">
+                    <p className="text-gray-800 mb-4"><strong>Method:</strong> {slide.method.rule}</p>
+                    {slide.method.hyderabadPractice && (
+                      <div className="space-y-2">
+                        <p className="font-semibold text-gray-800">{slide.method.hyderabadPractice.scenario}</p>
+                        <p className="text-gray-700">{slide.method.hyderabadPractice.situation}</p>
+                        <p className="text-xl font-bold text-blue-600">{slide.method.hyderabadPractice.fraction}</p>
+                        <p className="text-gray-700">Simplifies to: {slide.method.hyderabadPractice.simplification}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {slide.visual && (
                   <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8">
@@ -264,15 +393,157 @@ export default function LessonViewer({ lesson, onComplete }) {
             {/* Slide Type: Interactive */}
             {slide.type === 'interactive' && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">{slide.title}</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-3">
+                  <span className="text-4xl">✏️</span>
+                  {slide.title}
+                </h2>
+                {slide.instruction && (
+                  <p className="text-lg text-gray-700 mb-4">{slide.instruction}</p>
+                )}
                 <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-8">
-                  {slide.component}
+                  {slide.component || (
+                    <div className="space-y-4">
+                      {slide.practice && slide.practice.map((item, idx) => (
+                        <div key={idx} className="bg-white rounded-lg p-4 border-l-4 border-purple-500">
+                          <p className="text-gray-800 font-semibold mb-2">{item.problem || item.question}</p>
+                          {item.hint && (
+                            <p className="text-sm text-gray-600 italic">💡 Hint: {item.hint}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Slide Type: Realworld */}
-            {slide.type === 'realworld' && (
+            {/* Slide Type: Practice */}
+            {slide.type === 'practice' && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-3">
+                  <span className="text-4xl">📝</span>
+                  {slide.title}
+                </h2>
+                {slide.instruction && (
+                  <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                    <p className="text-gray-800">{slide.instruction}</p>
+                  </div>
+                )}
+                <div className="space-y-4">
+                  {slide.problems && slide.problems.map((prob, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 border-2 border-green-200"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0">
+                          {idx + 1}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-gray-800 font-semibold mb-2">{prob.question || prob.problem}</p>
+                          {prob.hint && (
+                            <p className="text-sm text-gray-600 italic mt-2">💡 {prob.hint}</p>
+                          )}
+                          {prob.answer && (
+                            <details className="mt-3">
+                              <summary className="cursor-pointer text-blue-600 font-semibold hover:text-blue-800">
+                                Show Answer
+                              </summary>
+                              <div className="mt-2 bg-white rounded p-3 border-l-4 border-blue-500">
+                                <p className="text-green-700 font-semibold">{prob.answer}</p>
+                              </div>
+                            </details>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+                {slide.encouragement && (
+                  <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                    <p className="text-yellow-900 font-semibold">✨ {slide.encouragement}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Slide Type: Advanced Problem */}
+            {slide.type === 'advanced-problem' && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-3">
+                  <span className="text-4xl">🎓</span>
+                  {slide.title}
+                </h2>
+                {slide.scenario && (
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6">
+                    <h3 className="font-bold text-gray-800 mb-3">Scenario:</h3>
+                    <p className="text-gray-800 mb-4">{slide.scenario.context}</p>
+
+                    {slide.scenario.distribution && (
+                      <div className="bg-white rounded-lg p-4 mb-4">
+                        <p className="text-gray-700"><strong>Distribution:</strong> {slide.scenario.distribution}</p>
+                      </div>
+                    )}
+
+                    {slide.scenario.status && (
+                      <div className="bg-white rounded-lg p-4 mb-4">
+                        <p className="text-gray-700"><strong>Status:</strong> {slide.scenario.status}</p>
+                      </div>
+                    )}
+
+                    {slide.scenario.complication && (
+                      <div className="bg-orange-50 rounded-lg p-4 mb-4 border-l-4 border-orange-400">
+                        <p className="text-gray-700"><strong>Additional Info:</strong> {slide.scenario.complication}</p>
+                      </div>
+                    )}
+
+                    {slide.scenario.challenges && (
+                      <div className="space-y-4 mt-4">
+                        <h4 className="font-bold text-gray-800">Challenges:</h4>
+                        {slide.scenario.challenges.map((challenge, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-4 space-y-3">
+                            <p className="text-gray-800 font-semibold">{challenge.question}</p>
+                            {challenge.solution && (
+                              <details className="mt-2">
+                                <summary className="cursor-pointer text-blue-600 font-semibold hover:text-blue-800">
+                                  Show Solution
+                                </summary>
+                                <div className="mt-3 space-y-2">
+                                  {typeof challenge.solution === 'object' ? (
+                                    Object.entries(challenge.solution).map(([key, value]) => (
+                                      <div key={key} className="bg-green-50 rounded p-3">
+                                        <p className="text-gray-800">
+                                          <strong>{key}:</strong> {value}
+                                        </p>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="bg-green-50 rounded p-3">
+                                      <p className="text-gray-800">{challenge.solution}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </details>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {slide.keyTakeaway && (
+                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-4 border-l-4 border-green-500">
+                    <p className="text-green-900 font-semibold">🔑 Key Takeaway: {slide.keyTakeaway}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Slide Type: Application (same as realworld) */}
+            {(slide.type === 'realworld' || slide.type === 'application') && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-3">
                   <span className="text-4xl">🌍</span>
@@ -282,15 +553,25 @@ export default function LessonViewer({ lesson, onComplete }) {
                 <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6">
                   <p className="text-lg text-gray-700 mb-4">{slide.scenario}</p>
 
+                  {slide.scenarios && slide.scenarios.map((sc, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-4 mb-4">
+                      <p className="text-gray-800 font-semibold mb-2">{sc.context || sc.situation}</p>
+                      {sc.calculation && <p className="text-gray-700 font-mono mt-2">{sc.calculation}</p>}
+                      {sc.explanation && <p className="text-gray-700 text-sm mt-2">{sc.explanation}</p>}
+                    </div>
+                  ))}
+
                   {slide.visual && (
                     <div className="my-6">
                       {slide.visual}
                     </div>
                   )}
 
-                  <div className="bg-white rounded-lg p-4 border-l-4 border-green-500">
-                    <p className="text-gray-800 font-semibold">{slide.explanation}</p>
-                  </div>
+                  {slide.explanation && (
+                    <div className="bg-white rounded-lg p-4 border-l-4 border-green-500">
+                      <p className="text-gray-800 font-semibold">{slide.explanation}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

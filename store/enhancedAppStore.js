@@ -374,10 +374,41 @@ export const useEnhancedStore = create(
         })
       },
 
-      // ===== ADAPTIVE DIFFICULTY =====
+      // ===== ADAPTIVE LEARNING =====
+      learningLevel: 'intermediate', // beginner, intermediate, advanced
+      conceptMastery: {}, // Track mastery level for each concept
       adaptiveDifficulty: {
         current: 'medium', // easy, medium, hard
         history: []
+      },
+
+      setLearningLevel: (level) => set({ learningLevel: level }),
+
+      updateConceptMastery: (concept, score) => {
+        const { conceptMastery } = get()
+        const current = conceptMastery[concept] || { attempts: 0, totalScore: 0, level: 'beginner' }
+
+        const newAttempts = current.attempts + 1
+        const newTotalScore = current.totalScore + score
+        const averageScore = newTotalScore / newAttempts
+
+        // Determine mastery level based on average score
+        let level = 'beginner'
+        if (averageScore >= 80) level = 'advanced'
+        else if (averageScore >= 60) level = 'intermediate'
+
+        set({
+          conceptMastery: {
+            ...conceptMastery,
+            [concept]: {
+              attempts: newAttempts,
+              totalScore: newTotalScore,
+              averageScore: Math.round(averageScore),
+              level,
+              lastAttempt: Date.now()
+            }
+          }
+        })
       },
 
       adjustDifficulty: (performance) => {

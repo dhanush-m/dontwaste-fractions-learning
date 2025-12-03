@@ -8,6 +8,7 @@ import LessonViewer from './lessons/LessonViewer'
 import MasteryQuiz from './MasteryQuiz'
 import AIChatbot from './AIChatbot'
 import { fractionsLesson } from '@/data/lessons/fractionsLesson'
+import { getAdaptiveFractionsLesson } from '@/data/lessons/adaptiveFractionsLesson'
 
 // Import existing activities
 import EquivalentFractionsMatcher from './activities/EquivalentFractionsMatcher'
@@ -24,20 +25,28 @@ const ACTIVITY_COMPONENTS = {
   'word-problems': WordProblems
 }
 
-const LESSONS = {
-  'fractions': fractionsLesson
-  // Add more lessons as they're created
-}
-
 export default function ChapterFlow({ chapterId, onComplete }) {
-  const { curriculum, completeLesson, completeActivity, setMastery } = useEnhancedStore()
+  const { curriculum, completeLesson, completeActivity, setMastery, learningLevel } = useEnhancedStore()
   const [currentStep, setCurrentStep] = useState('menu') // menu, lesson, activity, mastery
   const [selectedActivity, setSelectedActivity] = useState(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [adaptiveLesson, setAdaptiveLesson] = useState(null)
 
   const chapter = getChapterById(chapterId)
   const chapterProgress = curriculum[chapterId]
-  const lesson = LESSONS[chapterId]
+
+  // Get adaptive lesson based on learning level
+  useEffect(() => {
+    if (chapterId === 'fractions') {
+      const lesson = getAdaptiveFractionsLesson(learningLevel)
+      setAdaptiveLesson(lesson)
+    } else {
+      // For other chapters, use default lesson
+      setAdaptiveLesson(fractionsLesson)
+    }
+  }, [chapterId, learningLevel])
+
+  const lesson = adaptiveLesson
 
   useEffect(() => {
     // Auto-start with lesson if not completed

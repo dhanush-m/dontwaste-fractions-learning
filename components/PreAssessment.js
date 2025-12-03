@@ -28,7 +28,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     id: 2,
     concept: 'fractions-comparison',
-    question: 'Which fraction is larger?',
+    question: 'Which fraction is larger: 2/3 or 3/5?',
     options: ['2/3', '3/5', 'They are equal', 'Cannot determine'],
     correct: 0,
     difficulty: 'medium'
@@ -51,56 +51,16 @@ const ASSESSMENT_QUESTIONS = [
   },
   {
     id: 5,
-    concept: 'decimals-comparison',
-    question: 'Which is largest: 0.7, 0.07, or 0.77?',
-    options: ['0.7', '0.07', '0.77', 'All equal'],
-    correct: 2,
-    difficulty: 'medium'
-  },
-  {
-    id: 6,
     concept: 'percentages-basic',
     question: 'What is 50% as a decimal?',
     options: ['0.05', '0.5', '5.0', '50'],
     correct: 1,
     difficulty: 'easy'
-  },
-  {
-    id: 7,
-    concept: 'percentages-calculation',
-    question: 'What is 25% of 80?',
-    options: ['15', '20', '25', '30'],
-    correct: 1,
-    difficulty: 'medium'
-  },
-  {
-    id: 8,
-    concept: 'number-sense',
-    question: 'Round 4,687 to the nearest hundred',
-    options: ['4,600', '4,700', '5,000', '4,690'],
-    correct: 1,
-    difficulty: 'medium'
-  },
-  {
-    id: 9,
-    concept: 'fractions-equivalent',
-    question: 'Which fraction is equivalent to 2/3?',
-    options: ['3/4', '4/6', '6/8', '3/6'],
-    correct: 1,
-    difficulty: 'medium'
-  },
-  {
-    id: 10,
-    concept: 'mixed-concepts',
-    question: 'If you have $100 and spend 30%, how much do you have left?',
-    options: ['$30', '$60', '$70', '$90'],
-    correct: 2,
-    difficulty: 'hard'
   }
 ]
 
 export default function PreAssessment({ onComplete }) {
-  const { recordAnswer, adjustDifficulty, addXP, setPhase } = useEnhancedStore()
+  const { recordAnswer, adjustDifficulty, addXP, setPhase, setLearningLevel, updateConceptMastery } = useEnhancedStore()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState([])
   const [selectedAnswer, setSelectedAnswer] = useState(null)
@@ -143,6 +103,15 @@ export default function PreAssessment({ onComplete }) {
     // Adjust difficulty based on performance
     adjustDifficulty(percentage)
 
+    // Set learning level based on pre-assessment performance
+    if (percentage >= 80) {
+      setLearningLevel('advanced')
+    } else if (percentage >= 40) {
+      setLearningLevel('intermediate')
+    } else {
+      setLearningLevel('beginner')
+    }
+
     // Award XP for completing assessment
     addXP(30, 'Pre-Assessment Complete')
 
@@ -158,6 +127,12 @@ export default function PreAssessment({ onComplete }) {
       if (answer.correct) conceptScores[answer.concept].correct++
     })
 
+    // Update concept mastery for each concept tested
+    Object.entries(conceptScores).forEach(([concept, scores]) => {
+      const conceptPercentage = (scores.correct / scores.total) * 100
+      updateConceptMastery(concept, conceptPercentage)
+    })
+
     setShowResults({
       totalCorrect,
       percentage,
@@ -168,39 +143,27 @@ export default function PreAssessment({ onComplete }) {
   const getRecommendation = () => {
     if (!showResults) return null
 
-    const { percentage, conceptScores } = showResults
-
-    // Find weakest concept
-    let weakestConcept = null
-    let lowestScore = 100
-
-    Object.entries(conceptScores).forEach(([concept, scores]) => {
-      const score = (scores.correct / scores.total) * 100
-      if (score < lowestScore) {
-        lowestScore = score
-        weakestConcept = concept
-      }
-    })
+    const { percentage } = showResults
 
     if (percentage >= 80) {
       return {
         level: 'Advanced',
-        message: 'Great job! You have a strong foundation. We\'ll challenge you with advanced content.',
-        startChapter: 'fractions',
+        message: 'Excellent! You\'re ready for advanced concepts. We\'ll use real-world examples and challenging problems to keep you engaged.',
+        description: '✨ Expect: Complex scenarios, multi-step problems, and creative applications',
         color: 'green'
       }
-    } else if (percentage >= 60) {
+    } else if (percentage >= 40) {
       return {
         level: 'Intermediate',
-        message: 'Good work! We\'ll start with core concepts and build from there.',
-        startChapter: 'fractions',
+        message: 'Great start! We\'ll explain concepts with clear examples and gradually increase difficulty as you improve.',
+        description: '🎯 Expect: Step-by-step guidance, practical examples, and supportive hints',
         color: 'blue'
       }
     } else {
       return {
         level: 'Beginner',
-        message: 'No worries! We\'ll start with the fundamentals and build your skills step by step.',
-        startChapter: 'fractions',
+        message: 'Perfect! We\'ll start from scratch with super simple, fun examples (think pizza slices and chocolate bars!) and build your confidence step by step.',
+        description: '🌟 Expect: Visual aids, silly examples, lots of practice, and unlimited retakes',
         color: 'purple'
       }
     }
@@ -278,9 +241,23 @@ export default function PreAssessment({ onComplete }) {
                   <h3 className={`text-xl font-bold text-${recommendation.color}-800 mb-2`}>
                     Your Level: {recommendation.level}
                   </h3>
-                  <p className={`text-${recommendation.color}-700`}>{recommendation.message}</p>
+                  <p className={`text-${recommendation.color}-700 mb-3`}>{recommendation.message}</p>
+                  <p className="text-sm text-gray-600 italic">{recommendation.description}</p>
                 </div>
               </div>
+            </div>
+
+            {/* Adaptive Learning Info */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
+              <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span className="text-2xl">🎓</span>
+                Adaptive Learning Enabled
+              </h3>
+              <p className="text-gray-700 text-sm">
+                Our system will automatically adjust the difficulty and examples based on your performance.
+                If you struggle with a concept, we'll provide simpler explanations and more practice.
+                When you master a topic, we'll challenge you with harder problems!
+              </p>
             </div>
 
             {/* Concept Breakdown */}

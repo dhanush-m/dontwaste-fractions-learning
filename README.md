@@ -1,6 +1,6 @@
-# Exploring Fractions in Everyday Life
+# DontWaste Education
 
-An adaptive math learning module for Grades 5-6 students, aligned with CBSE curriculum and designed for Meru International School.
+An adaptive math learning platform for Grades 1-8 students, featuring personalized learning paths with Hyderabad-specific cultural context.
 
 ## Features
 
@@ -169,18 +169,28 @@ The backend server exposes the following endpoints:
 
 ## Deployment
 
-### Vercel Deployment
+### Quick Deploy to Vercel ▶️
 
-1. Push your code to GitHub
-2. Import project in Vercel
-3. Add environment variables in Vercel dashboard:
-   - `OPENAI_API_KEY`
-   - `NEXT_PUBLIC_API_URL` (your backend URL)
-4. Deploy
+The easiest way to deploy this application is using Vercel:
 
-### Backend Deployment
+1. **Push to Git**: Commit and push your code to GitHub/GitLab/Bitbucket
+2. **Import to Vercel**: Go to [vercel.com](https://vercel.com) and import your repository
+3. **Configure Environment Variables**:
+   - Add `OPENAI_API_KEY` in Vercel project settings
+4. **Deploy**: Click deploy and you're live!
 
-For production, deploy the Express server separately (e.g., Railway, Render, or Heroku) and update `NEXT_PUBLIC_API_URL` accordingly.
+**📖 For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)**
+
+### Important Notes
+
+- ✅ The app uses Next.js API routes (no separate backend needed)
+- ✅ Express server (`/server/index.js`) is for local development only
+- ✅ Progress is stored in browser local storage (no database required)
+- ✅ All features work on Vercel's free tier
+
+### Custom Domain
+
+After deployment, you can add a custom domain in Vercel project settings.
 
 ## Future Enhancements
 

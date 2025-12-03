@@ -1,7 +1,7 @@
 {
   "name": "dontwaste-fractions-learning",
   "version": "1.0.0",
-  "description": "Adaptive math learning module for fractions - Grades 5-6",
+  "description": "DontWaste Education - Adaptive math learning platform for Grades 1-8",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -178,11 +178,11 @@ export default function EnhancedFocusMeter() {
           if (faces && faces.length > 0) {
             faceDetected = true
             recordActivity('engaged')
-            console.log('✅ Face detected - engaged')
+            // console.log('✅ Face detected - engaged') // Disabled verbose logging
           } else {
             // No face detected - user might be looking away
             recordActivity('idle')
-            console.log('❌ No face detected - idle')
+            // console.log('❌ No face detected - idle') // Disabled verbose logging
           }
           return // Exit early if face detection worked
         } catch (error) {
