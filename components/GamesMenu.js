@@ -6,6 +6,9 @@ import FractionPizzaBuilder from './games/FractionPizzaBuilder'
 import FractionWar from './games/FractionWar'
 import EquivalentFractionsMatcher from './activities/EquivalentFractionsMatcher'
 import FractionComparison from './activities/FractionComparison'
+import AddingFractions from './activities/AddingFractions'
+import FractionNumberLine from './activities/FractionNumberLine'
+import WordProblems from './activities/WordProblems'
 
 const GAMES = [
   {
@@ -35,6 +38,27 @@ const GAMES = [
     description: 'Compare fractions and determine which is larger',
     component: FractionComparison,
     color: 'bg-green-500',
+  },
+  {
+    id: 'adding-fractions',
+    name: '➕ Adding Fractions',
+    description: 'Practice adding fractions step by step',
+    component: AddingFractions,
+    color: 'bg-purple-500',
+  },
+  {
+    id: 'number-line',
+    name: '📏 Number Line',
+    description: 'Place fractions on the number line',
+    component: FractionNumberLine,
+    color: 'bg-orange-500',
+  },
+  {
+    id: 'word-problems',
+    name: '🧮 Word Problems',
+    description: 'Solve real-world fraction problems',
+    component: WordProblems,
+    color: 'bg-indigo-500',
   },
   {
     id: 'bingo',

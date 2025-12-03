@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import LandingPage from '@/components/LandingPage'
 import Introduction from '@/components/Introduction'
-import AdaptiveActivities from '@/components/AdaptiveActivities'
+import CurriculumFlow from '@/components/CurriculumFlow'
 import Assessment from '@/components/Assessment'
 import Dashboard from '@/components/Dashboard'
 import GamesMenu from '@/components/GamesMenu'
@@ -32,7 +32,7 @@ export default function Home() {
       case 'introduction':
         return <Introduction />
       case 'activities':
-        return <AdaptiveActivities />
+        return <CurriculumFlow />
       case 'games':
         return <GamesMenu onBack={() => useAppStore.getState().setPhase('activities')} />
       case 'assessment':
