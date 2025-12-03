@@ -14,7 +14,7 @@ TimeBack Learning now features a **complete adaptive learning system** that rest
 
 **Flow:**
 ```
-Landing Page → Name Input → Pre-Assessment (5 questions) → Welcome Message → Chapters
+Landing Page → Name Input → Pre-Assessment (5 ques tions) → Welcome Message → Chapters
 ```
 
 ### 2. Reduced Pre-Assessment
